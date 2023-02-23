@@ -63,6 +63,7 @@ class Client {
   }
 
   Packet _createPacket(Message msg) {
+    //TODO: Split large packets into multiple MTU-3 packets
     final sequence = _sequence++ & 0xFF;
     final content = cbor.encode(msg.data);
     return Packet(
