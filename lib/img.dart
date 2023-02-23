@@ -95,7 +95,9 @@ class _ImageUpload {
     final TRUNCATED_HASH_LEN = 3;
     // "sha" and "image" params are only sent in the first packet.
     if (offset == 0) {
-      final shaSize = cbor.encode(CborString("sha")).length + cbor.encode(CborSmallInt(TRUNCATED_HASH_LEN)).length + TRUNCATED_HASH_LEN;
+      // "Android-nRF-Connect-Device-Manager uses truncated_hash, we use full
+      //final shaSize = cbor.encode(CborString("sha")).length + cbor.encode(CborSmallInt(TRUNCATED_HASH_LEN)).length + TRUNCATED_HASH_LEN;
+      final shaSize = cbor.encode(CborString("sha")).length + cbor.encode(CborBytes(hash)).length;
       // "Android-nRF-Connect-Device-Manager  only sends "image" if image > 0 since image = 0 is default.
       final imageSize = cbor.encode(CborString("image")).length + cbor.encode(CborSmallInt(image)).length;
       return shaSize + imageSize;
