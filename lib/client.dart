@@ -17,7 +17,7 @@ typedef WriteCallback = void Function(List<int>);
 /// Multiple commands may be executed at the same time.
 class Client {
   // Device btle MTU. This used to calculate ideal Chunk size
-  final int MTU;
+  final int maxPacketSize;
   final _input = StreamController<Packet>.broadcast();
   final _output = StreamController<Packet>.broadcast();
   late StreamSubscription<Packet> _subscription;
@@ -28,11 +28,11 @@ class Client {
   /// When executing a client, the request is sent using the [output] callback
   /// and the response is read from the [input] stream.
   Client({
-    required this.MTU,
+    required mtu,
     required Stream<List<int>> input,
     required WriteCallback output,
     Encoding encoding = smp,
-  }) {
+  }) : maxPacketSize = (mtu - 3) {
     _subscription = encoding.decode(input).listen(
           _input.add,
           onError: _input.addError,
@@ -62,8 +62,6 @@ class Client {
   }
 
   Packet _createPacket(Message msg) {
-    //TODO: Split large packets into multiple MTU-3 packets
-
     final sequence = _sequence++ & 0xFF;
     final content = cbor.encode(msg.data);
     final packet = Packet(
@@ -77,8 +75,7 @@ class Client {
       ),
       content: content,
     );
-    final packetLength = smp.encode(packet).length;
-
+    //final packetLength = smp.encode(packet).length;
     return packet;
   }
 

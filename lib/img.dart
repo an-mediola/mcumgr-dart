@@ -92,7 +92,6 @@ class _ImageUpload {
   });
 
   int getAdditionalSize(int offset) {
-    final TRUNCATED_HASH_LEN = 3;
     // "sha" and "image" params are only sent in the first packet.
     if (offset == 0) {
       // "Android-nRF-Connect-Device-Manager uses truncated_hash, we use full
@@ -124,13 +123,13 @@ class _ImageUpload {
     final combinedSize = headerSize + mapSize + offsetSize + lengthSize + implSpecificSize + dataStringSize;
 
     // Now we calculate the max amount of data that we can fit given the MTU.
-    final maxDataLength = client.MTU - combinedSize;
+    final maxDataLength = client.maxPacketSize - combinedSize;
     // We have to take into account the few bytes of CBOR which describe the length of the data.
     // Even though we don't know the actual length at this point, the maxDataLength is guaranteed
     // to be larger than what we will eventually send, making this calculation always correct.
     final maxDataUIntTokenSize = cbor.encode(CborSmallInt(maxDataLength)).length;
     // Final data chunk size
-    final maxChunkSize = client.MTU - combinedSize - maxDataUIntTokenSize;
+    final maxChunkSize = client.maxPacketSize - combinedSize - maxDataUIntTokenSize;
     return min(maxChunkSize, data.length - offset);
   }
 
