@@ -89,6 +89,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
         deviceId: widget.device.id,
       );
       newClient = Client(
+        MTU: 517,
         input: widget.ble.subscribeToCharacteristic(characteristic).handleError(
           (error) {
             // ignore errors

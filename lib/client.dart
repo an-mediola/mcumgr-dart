@@ -16,6 +16,8 @@ typedef WriteCallback = void Function(List<int>);
 ///
 /// Multiple commands may be executed at the same time.
 class Client {
+  // Device btle MTU. This used to calculate ideal Chunk size
+  final int MTU;
   final _input = StreamController<Packet>.broadcast();
   final _output = StreamController<Packet>.broadcast();
   late StreamSubscription<Packet> _subscription;
@@ -26,6 +28,7 @@ class Client {
   /// When executing a client, the request is sent using the [output] callback
   /// and the response is read from the [input] stream.
   Client({
+    required this.MTU,
     required Stream<List<int>> input,
     required WriteCallback output,
     Encoding encoding = smp,
@@ -51,11 +54,7 @@ class Client {
   Stream<Packet> get outgoing => _output.stream;
 
   Future<Packet> _execute(Packet packet, Duration timeout) {
-    final future = _input.stream
-        .where((m) => m.header.sequence == packet.header.sequence)
-        .where((m) => _isResponse(m))
-        .timeout(timeout)
-        .first;
+    final future = _input.stream.where((m) => m.header.sequence == packet.header.sequence).where((m) => _isResponse(m)).timeout(timeout).first;
 
     send(packet);
 
@@ -64,6 +63,7 @@ class Client {
 
   Packet _createPacket(Message msg) {
     //TODO: Split large packets into multiple MTU-3 packets
+
     final sequence = _sequence++ & 0xFF;
     final content = cbor.encode(msg.data);
     return Packet(
@@ -108,8 +108,7 @@ class Client {
   /// [ClientImgExtension.uploadImage] instead.
   /// This low-level method requires building the message and decoding
   /// the response (including error codes) yourself.
-  Future<Message> execute(Message msg, Duration timeout) =>
-      _execute(_createPacket(msg), timeout).then(_createMessage);
+  Future<Message> execute(Message msg, Duration timeout) => _execute(_createPacket(msg), timeout).then(_createMessage);
 
   /// Sends the [packet].
   ///
