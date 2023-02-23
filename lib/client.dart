@@ -66,7 +66,7 @@ class Client {
 
     final sequence = _sequence++ & 0xFF;
     final content = cbor.encode(msg.data);
-    return Packet(
+    final packet = Packet(
       header: Header(
         type: msg.op,
         flags: msg.flags,
@@ -77,6 +77,9 @@ class Client {
       ),
       content: content,
     );
+    final packetLength = smp.encode(packet).length;
+
+    return packet;
   }
 
   bool _isResponse(Packet packet) {
