@@ -75,6 +75,7 @@ class _ImageUpload {
   final List<int> hash;
   final Duration chunkTimeout;
   //final int maxChunkSize;
+  //final int maxChunkSize;
   final void Function(int)? onProgress;
   final int windowSize;
   final List<_ImageUploadChunk> pending = [];
@@ -134,6 +135,11 @@ class _ImageUpload {
   }
 
   int sendChunk(int offset) {
+    int chunkSize = getMaxChunkSize(offset);
+    // int chunkSize = data.length - offset;
+    // if (chunkSize > maxChunkSize) {
+    //   chunkSize = maxChunkSize;
+    // }
     int chunkSize = getMaxChunkSize(offset);
     // int chunkSize = data.length - offset;
     // if (chunkSize > maxChunkSize) {
