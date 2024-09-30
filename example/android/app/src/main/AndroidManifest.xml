@@ -1,5 +1,32 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+   <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    
+    <!-- Request legacy Bluetooth permissions on older devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" /> 
+
+    <!-- Android 12 Bluetooth permissions. From: https://developer.android.com/guide/topics/connectivity/bluetooth/permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Required to fetch data from the internet. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- needed for writing backup and other files to downloads or other directories -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <!-- needed for getting wifi name in android 12 and greater -->
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+   
+
    <application
         android:label="example"
         android:name="${applicationName}"

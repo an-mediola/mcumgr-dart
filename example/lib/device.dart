@@ -81,6 +81,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
     ImageState? newImageState;
     if (event.connectionState == DeviceConnectionState.connected) {
       final actualMtu = await widget.ble.requestMtu(deviceId: widget.device.id, mtu: 498);
+
+      final services = await widget.ble.getDiscoveredServices(widget.device.id);
+      print(services);
       final characteristic = QualifiedCharacteristic(
         serviceId: Uuid.parse("8d53dc1d-1db7-4cd3-868b-8a527460aa84"),
         characteristicId: Uuid.parse("da2e7828-fbce-4e01-ae9e-261174997c48"),
@@ -162,11 +165,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
       progress = 0;
     });
     try {
+      await client!.erase(const Duration(seconds: 120));
       await client!.uploadImage(
         0,
         content,
         image.hash,
-        const Duration(seconds: 30),
+        const Duration(seconds: 120),
         onProgress: (count) {
           setState(() {
             progress = count.toDouble() / content.length;

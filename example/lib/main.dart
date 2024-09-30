@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:mcumgr_example/scanner.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'device.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Permission.location.request();
+  await Permission.locationWhenInUse.request();
+  await Permission.bluetoothScan.request();
+  await Permission.bluetoothConnect.request();
+  await Permission.storage.request();
+
   final flutterReactiveBle = FlutterReactiveBle();
   final scanner = Scanner(
     flutterReactiveBle,
     // withServices: [Uuid.parse("8d53dc1d-1db7-4cd3-868b-8a527460aa84")],
   );
+
   runApp(MyApp(
     flutterReactiveBle: flutterReactiveBle,
     scanner: scanner,
@@ -67,10 +76,15 @@ class MyHomePage extends StatelessWidget {
               return Text(snapshot.error.toString());
             }
             final data = snapshot.data!;
+            final items = data.devices
+                // .where(
+                //   (element) => element.name.toLowerCase().contains('amir'),
+                // )
+                .toList();
             return ListView.builder(
-              itemCount: data.devices.length,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                final device = data.devices[index];
+                final device = items[index];
                 return ListTile(
                   title: Text(device.name),
                   subtitle: Text(device.id),

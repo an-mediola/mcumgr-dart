@@ -140,11 +140,6 @@ class _ImageUpload {
     // if (chunkSize > maxChunkSize) {
     //   chunkSize = maxChunkSize;
     // }
-    int chunkSize = getMaxChunkSize(offset);
-    // int chunkSize = data.length - offset;
-    // if (chunkSize > maxChunkSize) {
-    //   chunkSize = maxChunkSize;
-    // }
     if (chunkSize <= 0) {
       return 0;
     }
